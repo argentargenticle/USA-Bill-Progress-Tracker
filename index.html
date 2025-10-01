@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USA Bill Progress Tracker</title>
+    <meta name="description" content="Interactive flow chart showing the progress of a bill through the US legislative process">
+    
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .mermaid {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+            width: 100%;
+            min-height: 600px;
+            overflow: visible;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>US Bill Progress Tracker</h1>
+        
+        <div class="controls">
+            <button id="zoomIn">Zoom In</button>
+            <button id="zoomOut">Zoom Out</button>
+            <button id="zoomReset">Reset View</button>
+        </div>
+        
+        <div class="mermaid">
+        graph TD
+            A[Start] --> B[Bill Introduced]
+            B --> C[Committee Review]
+            C --> D{Approved?}
+            D -->|Yes| E[House Vote]
+            D -->|No| F[Bill Fails]
+            E --> G{Approved?}
+            G -->|Yes| H[Senate Vote]
+            G -->|No| F
+            H --> I[President Action]
+            I --> J{Signed?}
+            J -->|Yes| K[Bill Becomes Law]
+            J -->|No| L[Veto Override?]
+            L -->|2/3 Majority| K
+            L -->|Veto Sustained| F
+            K --> M[End]
+            F --> M
+        </div>
+    </div>
+
+    <script>
+    // Initialize Mermaid
+    document.addEventListener('DOMContentLoaded', function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                diagramPadding: 20
+            }
+        });
+        
+        // Force re-render if needed
+        if (typeof mermaid !== 'undefined') {
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        }
+
+        // Zoom functionality
+        let currentScale = 1;
+        const mermaidContainer = document.querySelector('.mermaid');
+        
+        document.getElementById('zoomIn').addEventListener('click', function() {
+            currentScale = Math.min(2, currentScale + 0.2);
+            mermaidContainer.style.transform = `scale(${currentScale})`;
+            mermaidContainer.style.transformOrigin = 'top center';
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', function() {
+            currentScale = Math.max(0.5, currentScale - 0.2);
+            mermaidContainer.style.transform = `scale(${currentScale})`;
+            mermaidContainer.style.transformOrigin = 'top center';
+        });
+
+        document.getElementById('zoomReset').addEventListener('click', function() {
+            currentScale = 1;
+            mermaidContainer.style.transform = 'scale(1)';
+            mermaidContainer.style.transformOrigin = 'top center';
+        });
+        
+        // Initial render
+        mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+    });
+    </script>
+</body>
+</html>
